@@ -18,21 +18,25 @@ main:
 	push	%rbx
 	mov	%rdi, %r10
 	mov	%rsi, %r11
-	//mov	%rsi, %rbx	// Check argc if we should print usage and exit
 	cmp	$4, %rdi
 	jl	usage
-	
-	#lea	.str(%rip), %rdi
-	#mov	16(%r11), %rsi
-	#call	printf
-	#jmp	exit
 	
 	mov	16(%r11), %rdi
 	lea	.plus(%rip), %rsi
 	call	strcmp
 	je	add
-	//cmp	$'+', 16(%r11)
-	//je	add
+	
+	lea	.minus(%rip), %rsi
+	call	strcmp
+	je	sub
+	
+	lea	.slash(%rip), %rsi
+	call	strcmp
+	je	div
+	
+	lea	.star(%rip), %rsi
+	call	strcmp
+	je	mul
 
 usage:		// Print usage statement and exit with error
 	mov	%rbx, %rsi
