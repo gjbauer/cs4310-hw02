@@ -3,9 +3,10 @@
 	.text
 
 main:
-	push	%rbx
-	mov	%rsi, %rbx	// Check argc if we should print usage and exit
-	cmp	$2, %rdi
+	push	%rbx	// Push rbx onto the stack and move &argv to rbx
+	mov	%rsi, %rbx
+	
+	cmp	$2, %rdi	// Check argc if we should print usage and exit
 	jne	usage
 	
 	mov	8(%rsi), %rdi	// Call atol on argv[1]

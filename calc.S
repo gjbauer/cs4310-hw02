@@ -2,11 +2,25 @@
 	.global main
 	.text
 mul:
-	#mov $mul_str, %rdi
-	call printf
-	ret
+	mov	%r13, %rax
+	mul	%r14
+	lea	.output(%rip), %rdi
+	mov	%r13, %rsi
+	lea	.star(%rip), %rdx
+	mov	%r14, %rcx
+	mov	%rax, %r8
+	call	printf
+	jmp exit
 div:
-	ret
+	add	%r13, %rax
+	div	%r14, %rax
+	lea	.output(%rip), %rdi
+	mov	%r13, %rsi
+	lea	.slash(%rip), %rdx
+	mov	%r14, %rcx
+	mov	%rax, %r8
+	call	printf
+	jmp exit
 add:
 	add	%r13, %rax
 	add	%r14, %rax
@@ -45,7 +59,6 @@ main:
 	// Store our first and third variables for use later..
 	mov	$1, %rbx	// argv[1]
 	
-	lea	.str(%rip), %rdi
 	mov	(%r12,%rbx,8), %rdi
 	call	atol
 	mov	%rax, %r13
@@ -62,20 +75,18 @@ main:
 	lea	.plus(%rip), %rsi
 	call	strcmp
 	je	add
-	#pop	%r14
-	#pop	%r13
 	
 	lea	.minus(%rip), %rsi
 	call	strcmp
 	je	sub
 	
-	/*lea	.slash(%rip), %rsi
+	lea	.slash(%rip), %rsi
 	call	strcmp
 	je	div
 	
 	lea	.star(%rip), %rsi
 	call	strcmp
-	je	mul*/
+	je	mul
 
 usage:		// Print usage statement and exit with error
 	lea	.usage(%rip), %rdi
@@ -92,18 +103,9 @@ exit:
 	ret
 
 	.data
-mul_str:	.string	"%ld * "
-div_str:	.string "%ld / "
-add_str:	.string "%ld + "
-sub_str:	.string "%ld - "
-mid_str:	.string "%ld = "
-end_str:	.string "%ld"
 
-.str: .string "%s\n"
 .output: .string "%ld %s %ld = %ld\n"
 .usage: .string	"Usage:\n  N [OP] H, where N & H > 0 and OP is an operation\n"
-.hello: .string	"hello\n"
-.fib_i: .string	"fib(%ld) = %ld\n"
 .plus: .string	"+"
 .minus: .string	"-"
 .slash: .string	"/"
