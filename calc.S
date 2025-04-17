@@ -1,5 +1,5 @@
 
-	.global _start
+	.global main
 	.text
 mul:
 	#mov $mul_str, %rdi
@@ -8,40 +8,54 @@ mul:
 div:
 	ret
 add:
-	add	%r12, %rax
 	add	%r13, %rax
+	add	%r14, %rax
 	lea	.output(%rip), %rdi
-	mov	%r12, %rsi
+	mov	%r13, %rsi
 	lea	.plus(%rip), %rdx
-	mov	%r13, %rcx
+	mov	%r14, %rcx
 	mov	%rax, %r8
 	call	printf
 	jmp exit
 sub:
 	ret
 
-_start:
-	cmp	$4, %rdi
+main:
+	push	%r12
+	mov	%rsi, %r12
+	push	%rbp
+	mov	%rdi, %rbp
+	push	%rbx
+	mov	$0, %rbx
+	
+	push	%r13
+	push	%r14
+	
+	cmp	$4, %rbp
 	jl	usage
 	
 	// Store our first and third variables for use later..
-	lea	.str(%rip), %rdi
-	mov	16(%rsp), %rdi
-	call	atol
-	mov	%rax, %r12
+	mov	$1, %rbx	// argv[1]
 	
-	mov	32(%rsp), %rdi
+	lea	.str(%rip), %rdi
+	mov	(%r12,%rbx,8), %rdi
 	call	atol
 	mov	%rax, %r13
 	
-	mov	24(%rsp), %rdi
+	mov	$3, %rbx	// argv[3]
+	
+	mov	(%r12,%rbx,8), %rdi
+	call	atol
+	mov	%rax, %r14
+	
+	mov	$2, %rbx	// argv[2]
+	
+	mov	(%r12,%rbx,8), %rdi
 	lea	.plus(%rip), %rsi
 	call	strcmp
-	push	%r12
-	push	%r13
 	je	add
+	#pop	%r14
 	#pop	%r13
-	#pop	%r12
 	
 	/*lea	.minus(%rip), %rsi
 	call	strcmp
@@ -62,8 +76,11 @@ usage:		// Print usage statement and exit with error
 	jmp	exit
 
 exit:
+	pop	%r14
 	pop	%r13
 	pop	%r12
+	pop	%rbp
+	pop	%rbx
 	ret
 
 	.data

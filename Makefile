@@ -9,7 +9,7 @@ ccalc: calc.c
 	gcc -g -o ccalc calc.c
 
 acalc: calc.S
-	gcc -g -no-pie -o acalc calc.S -nostartfiles
+	gcc -g -no-pie -o acalc calc.S
 
 cfib: fib.c
 	gcc -g -o cfib fib.c
