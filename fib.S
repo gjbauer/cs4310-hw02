@@ -3,30 +3,45 @@
 	.text
 
 main:
-	# z= x+y
-	enter $0, $0 	# y= z
-	mov %rdi, %r10    # argc
-	mov %rsi, %r11    # argv
-	#mov $1, %r12	# x= 1
-	#mov $0, %r13	# y= 0
-	#mov $0, %r14	# z= 0
-	#mov $0, %r15	# i= 1
+	push	%rbx
+	mov	%rsi, %rbx	// Check argc if we should print usage and exit
+	cmp	$2, %rdi
+	jne	usage
 	
-	mov 8(%r11), %rdi # argv[1]
-	call atol
-	mov %rax, %rbx	# argv[1]
+	mov	8(%rsi), %rdi	// Call atol on argv[1]
+	call	atol
+	mov	%rax, %rsi	// Store result in second argument register
+	jmp	start	// Run program
 
-	mov $num_nl, %rdi	#Debuggers...
-	mov %rbx, %rsi
-	call printf
-	leave
-	ret
-fib:
-	enter $0, $0
-	leave
-	pop %r15
+usage:		// Print usage statement and exit with error
+	mov	%rbx, %rsi
+	lea	.usage(%rip), %rdi
+	mov	$0, %rax
+	call	printf
+	mov	$-1, %rax
+	jmp	exit
+
+start:	// Initialize variable
+	mov	$0, %rax
+	mov	$0, %rbx
+	mov	$1, %rdx
+loop:	// Count loop index in accumulator, perform fib calculation, return result when on the correct iterance
+	cmp	%rax, %rsi
+	je	result
+	lea	(%rdx,%rbx), %rcx	// Sum rdx and rbx, store the result in rcx
+	inc	%rax	// Increment accumulator
+	mov	%rbx, %rdx	// Move values to down as a prerquisite for the next iteration
+	mov	%rcx, %rbx
+	jmp	loop
+result:
+	mov	%rbx, %rdx	// Move results of calculation in third argument register
+	lea	.fib_i(%rip), %rdi	// Move string const into first argument register (result from atol still in second...)
+	call	printf
+	mov	%rbx, %rax	// Move results of calculation into accumulator/return register and exit
+exit:
+	pop	%rbx
 	ret
 
 	.data
-fib_i:	.string	"fib(%ld) = "
-num_nl:	.string	"%d\n"
+.usage: .string	"Usage:\n  %s N, where N > 0\n"
+.fib_i: .string	"fib(%ld) = %ld\n"
