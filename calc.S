@@ -18,7 +18,15 @@ add:
 	call	printf
 	jmp exit
 sub:
-	ret
+	add	%r13, %rax
+	sub	%r14, %rax
+	lea	.output(%rip), %rdi
+	mov	%r13, %rsi
+	lea	.minus(%rip), %rdx
+	mov	%r14, %rcx
+	mov	%rax, %r8
+	call	printf
+	jmp exit
 
 main:
 	push	%r12
@@ -57,11 +65,11 @@ main:
 	#pop	%r14
 	#pop	%r13
 	
-	/*lea	.minus(%rip), %rsi
+	lea	.minus(%rip), %rsi
 	call	strcmp
 	je	sub
 	
-	lea	.slash(%rip), %rsi
+	/*lea	.slash(%rip), %rsi
 	call	strcmp
 	je	div
 	
