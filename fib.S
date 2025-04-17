@@ -10,6 +10,8 @@ main:
 	
 	mov	8(%rsi), %rdi	// Call atol on argv[1]
 	call	atol
+	cmp	$0, %rax
+	jl	usage
 	mov	%rax, %rsi	// Store result in second argument register
 	jmp	start	// Run program
 
@@ -21,7 +23,7 @@ usage:		// Print usage statement and exit with error
 	mov	$-1, %rax
 	jmp	exit
 
-start:	// Initialize variable
+start:	// Initialize variables
 	mov	$0, %rax
 	mov	$0, %rbx
 	mov	$1, %rdx
