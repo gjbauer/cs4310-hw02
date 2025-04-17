@@ -5,10 +5,10 @@
 main:
 	push %r15	# z= x+y
 	enter $8, $0 	# y= z
-	mov $1, %rbx	# x= 1
-	mov $1, %r12	# y= 1
-	mov $0, %r13	# z= 0
-	mov $0, %r14
+	mov $1, %r12	# x= 1
+	mov $0, %r13	# y= 0
+	mov $0, %r14	# z= 0
+	mov $0, %r15	# i= 1
 
 	#mov $r14, %rdi	#Debuggers...
 	#mov %r14, %rsi
